@@ -1,0 +1,28 @@
+version: "3.6"
+services:
+  discovery:
+    build: ./EurekaServer
+    ports:
+      - "1111:8755"
+    image: "eureka-service"
+
+  formation:
+    build: ./RHPROJECT
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8755/eureka/
+    ports:
+      - "3000:9091"
+    image: "formation-service"
+    depends_on:
+      - discovery
+
+  gateway:
+    build: ./API-Gateway_Server
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8755/eureka/
+    ports:
+      - "3006:8090"
+    image: "gateway-service"
+    depends_on:
+      - discovery
+
